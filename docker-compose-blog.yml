@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  app:
+    image: bitwalker/alpine-elixir-phoenix
+    volumes:
+      - .:/opt/app
+    ports:
+      - 4000:4000
+    stdin_open: true
+    tty: true
+    command: bash
+
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=blog_dev
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
