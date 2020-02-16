@@ -23,6 +23,7 @@ defmodule BlogWeb do
 
       import Plug.Conn
       import BlogWeb.Gettext
+      import BlogWeb.Auth, only: [authenticate_user: 2]
       alias BlogWeb.Router.Helpers, as: Routes
     end
   end
@@ -50,6 +51,7 @@ defmodule BlogWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
+      import BlogWeb.Auth, only: [authenticate_user: 2]
     end
   end
 

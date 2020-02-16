@@ -3,7 +3,7 @@ defmodule Blog.Accounts.User do
   import Ecto.Changeset
 
   schema "users" do
-    field :avatar, :string
+    field :avatar, :string, virtual: true
     field :email, :string
     field :name, :string
     field :username, :string
@@ -17,7 +17,7 @@ defmodule Blog.Accounts.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:name, :email, :avatar, :username])
-    |> validate_required([:name, :email, :avatar, :username])
+    |> validate_required([:name, :email, :username])
     |> validate_format(:email, ~r/@/)
     |> validate_length(:username, min: 3, max: 25)
     |> unique_constraint(:email)
@@ -32,10 +32,10 @@ defmodule Blog.Accounts.User do
     |> validate_required([:password])
     |> validate_length(:password, min: 6, max: 100)
     |> validate_confirmation(:password, required: true)
-    |> hash()
+    |> password_hash()
   end
 
-  defp hash(changeset) do
+  defp password_hash(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{password: password}} ->
         put_change(changeset, :password_hash, Pbkdf2.hash_pwd_salt(password))

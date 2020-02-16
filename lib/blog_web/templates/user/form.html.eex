@@ -6,28 +6,24 @@
   <% end %>
 
   <%= label f, :name %>
-  <%= text_input f, :name %>
+  <%= text_input f, :name, placeholder: "Name" %>
   <%= error_tag f, :name %>
 
   <%= label f, :username %>
-  <%= text_input f, :username %>
+  <%= text_input f, :username, placeholder: "Username" %>
   <%= error_tag f, :username %>
 
   <%= label f, :email %>
-  <%= text_input f, :email %>
+  <%= text_input f, :email, placeholder: "Email" %>
   <%= error_tag f, :email %>
-
-  <%= label f, :avatar %>
-  <%= text_input f, :avatar %>
-  <%= error_tag f, :avatar %>
 
   <%= if @form_type == :new do %>
     <%= label f, :password, "Password" %>
-    <%= password_input f, :password %>
+    <%= password_input f, :password, placeholder: "Password" %>
     <%= error_tag f, :password %>
 
     <%= label f, :password, "Confirm password" %>
-    <%= password_input f, :password_confirmation %>
+    <%= password_input f, :password_confirmation, placeholder: "Confirm password" %>
     <%= error_tag f, :password_confirmation %>
   <% end %>
 

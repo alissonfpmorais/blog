@@ -119,4 +119,91 @@ defmodule Blog.Accounts do
   def change_user(%User{} = user) do
     User.changeset(user, %{})
   end
+
+  @doc """
+  Authenticate a user by checking the given email and password
+
+  ## Examples
+
+    iex> authenticate("right@email.com", "right_pass")
+    {:ok, %User{}}
+
+    iex> authenticate("right@email.com", "bad_pass")
+    {:error, :unauthorized}
+
+    iex> authenticate("wrong@email.com", "right_pass")
+    {:error, :not_found}
+  """
+  def authenticate_by_email_and_password(email, given_pass) do
+    get_user_by!(email: email)
+    |> authenticate(given_pass)
+  end
+
+  @doc """
+  Authenticate a user by checking the given username and password
+
+  ## Examples
+
+    iex> authenticate("right_user", "right_pass")
+    {:ok, %User{}}
+
+    iex> authenticate("right_user", "bad_pass")
+    {:error, :unauthorized}
+
+    iex> authenticate("wrong_user", "right_pass")
+    {:error, :not_found}
+  """
+  def authenticate_by_username_and_password(username, given_pass) do
+    get_user_by!(username: username)
+    |> authenticate(given_pass)
+  end
+
+  @doc """
+  Authenticate a user by checking the given password
+
+  ## Examples
+
+    iex> authenticate(%User{}, "right_pass")
+    {:ok, %User{}}
+
+    iex> authenticate(%User{}, "bad_pass")
+    {:error, :unauthorized}
+
+    iex> authenticate(nil, "right_pass")
+    {:error, :not_found}
+  """
+  def authenticate(user, given_pass) do
+    cond do
+      user && Pbkdf2.verify_pass(given_pass, user.password_hash) ->
+        {:ok, user}
+
+      user ->
+        {:error, :unauthorized}
+
+      true ->
+        Pbkdf2.no_user_verify()
+        {:error, :not_found}
+    end
+  end
+
+  @doc """
+  Generate a gravatar url from a given email
+
+  ## Examples
+
+      iex> gravatar_email_hash("johndoe@email.com")
+      "https://www.gravatar.com/avatar/850cb023e169427bb9eb3f3b18d0f091?s=150&d=identicon"
+  """
+  def gravatar_email_hash(email) do
+    hash = email_hash(email)
+    "https://www.gravatar.com/avatar/#{hash}?s=340&d=identicon"
+  end
+
+  defp email_hash(email) do
+    email
+    |> String.trim()
+    |> String.downcase()
+    |> :erlang.md5()
+    |> Base.encode16(case: :lower)
+  end
 end
